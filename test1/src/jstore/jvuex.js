@@ -4,13 +4,31 @@ class Store {
     constructor(options) {
         this._mutations = options.mutations
         this._actions = options.actions
+        this._getters = options.getters
+
+        const computed = {}
+        this.getters = {}
+        if (this._getters) {
+            const _this = this;
+            Object.keys(this._getters).forEach(key => {
+              
+                computed[key] = function() {
+                    return _this._getters[key](_this.state)
+                }
+
+                Object.defineProperty(_this.getters, key, {
+                    get: () => _this._vm[key]
+                })
+            })
+        }
 
         this._vm = new Vue({
             data() {
                 return {
                     $$state: options.state
                 }
-            }
+            },
+            computed
         })
 
         this.commit = this.commit.bind(this)
