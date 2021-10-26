@@ -136,6 +136,22 @@ class Compile {
         node.innerHTML = val
     }
 
+    inputUpdater(node, val) {
+        node.value = val
+    }
+
+    // 双向绑定
+    model(node, exp) {
+        // 初始化值
+        var _this = this;
+        _this.update(node, exp, "input")
+        console.log("初始化")
+        node.addEventListener("input", function(e) {
+            console.log("更新")
+            _this.$vm[exp] = e.target.value
+        })
+    }
+
     // 更新html
     html(node, exp) {
         this.update(node, exp, "html")
@@ -154,8 +170,19 @@ class Compile {
             if (this.isDir(attrName)) {
                 const dir = attrName.substring(2);
                 this[dir] && this[dir](node, exp)
+            } else if (this.isEvent(attrName)) {
+                // 事件
+                const eventName = attrName.slice(1)
+                var _this = this;
+                node.addEventListener(eventName, function(e) {
+                    _this.$vm.$options.methods[exp] && _this.$vm.$options.methods[exp].call(_this.$vm, e)
+                })
             }
         })
+    }
+
+    isEvent(attrName) {
+        return attrName.startsWith("@");
     }
 
     isElement(node) {
