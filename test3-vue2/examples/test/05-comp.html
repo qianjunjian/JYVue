@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Vue源码剖析</title>
+    <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="demo">
+        <h1>Vue组件化机制</h1>
+        <!-- comp和h1渲染函数中表现有何不同？ -->
+        <!-- 渲染的结果是啥？如何起作用？ -->
+        <comp></comp>
+    </div>
+    <script>
+        // 1.全局声明组件
+        Vue.component('comp', {
+            template: '<div>I am comp</div>',
+            // 2.局部声明组件
+            // components: {
+            //     comp2: {}
+            // }
+        })
+        // 创建实例
+        const app = new Vue({
+            el: '#demo'
+        });
+
+        console.log(app.$options.render);
+    </script>
+</body>
+
+</html>
